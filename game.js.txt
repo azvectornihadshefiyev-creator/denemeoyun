@@ -1,0 +1,291 @@
+const $ = (id) => document.getElementById(id);
+const key = "obsidian-city-github-demo";
+const tick = 10_000;
+const maxShift = 8 * 3_600_000;
+const format = new Intl.NumberFormat("az-AZ");
+const credits = (value) => format.format(value) + " kredit";
+
+const jobs = [
+  ["Kuryer", 6, 0],
+  ["Barista", 9, 20],
+  ["Mexanik", 15, 80],
+  ["Dizayner", 23, 200],
+  ["Mühəndis", 34, 450],
+  ["Layihə rəhbəri", 50, 900],
+];
+
+const stock = [
+  ["Sahil studiyası", "Ev", 1250],
+  ["Mərkəz loftu", "Ev", 6200],
+  ["Terraslı mənzil", "Ev", 14200],
+  ["Sahil villası", "Ev", 95000],
+  ["Şəhər hetçbeki", "Maşın", 950],
+  ["Klassik kupe", "Maşın", 4800],
+  ["Elektrik sedanı", "Maşın", 12600],
+  ["Sahil GT", "Maşın", 33000],
+  ["Şəhər paltosu", "Geyim", 180],
+  ["İdman ayaqqabısı", "Geyim", 270],
+  ["Studiya gödəkçəsi", "Geyim", 630],
+  ["Maliyyə kostyumu", "Geyim", 1650],
+  ["Məhəllə kafesi", "Biznes", 9500, 320],
+  ["Dizayn studiyası", "Biznes", 23500, 850],
+  ["Təmir emalatxanası", "Biznes", 42000, 1600],
+];
+
+let state;
+try {
+  const saved = JSON.parse(localStorage.getItem(key));
+  if (saved?.name && Array.isArray(saved.owned) && saved.business) state = saved;
+} catch {}
+
+let screen = "Şəhər";
+let category = "Hamısı";
+const today = () => Math.floor((Date.now() + 4 * 3_600_000) / 86_400_000);
+
+function write(text) {
+  $("message").textContent = text;
+}
+
+function save() {
+  try {
+    localStorage.setItem(key, JSON.stringify(state));
+  } catch {
+    write("Brauzer yaddaşı bağlıdır. İrəliləyiş bu sessiyada qalacaq.");
+  }
+}
+
+function settle() {
+  if (!state?.shift) return false;
+  const shift = state.shift;
+  const end = shift.start + maxShift;
+  const now = Date.now();
+  const turns = Math.max(0, Math.floor((Math.min(now, end) - shift.paid) / tick));
+  state.cash += turns * jobs[shift.job][1];
+  state.xp += turns;
+  shift.paid += turns * tick;
+  if (now >= end) state.shift = null;
+  return turns > 0 || !state.shift;
+}
+
+function element(tag, text) {
+  const item = document.createElement(tag);
+  if (text !== undefined) item.textContent = text;
+  return item;
+}
+
+function button(text, click, disabled = false) {
+  const item = element("button", text);
+  item.type = "button";
+  item.disabled = disabled;
+  item.addEventListener("click", click);
+  return item;
+}
+
+function panel(title, description) {
+  const item = element("article");
+  item.className = "panel";
+  item.append(element("h3", title), element("p", description));
+  return item;
+}
+
+function finish(text) {
+  write(text);
+  save();
+  render();
+}
+
+function showBalances() {
+  $("cash").textContent = credits(state.cash);
+  $("bank").textContent = credits(state.bank);
+  $("xp").textContent = format.format(state.xp) + " XP";
+  const shift = state.shift;
+  if (!shift) {
+    $("shift").textContent = "Dayanıb";
+    return;
+  }
+  const next = Math.max(1, Math.ceil((shift.paid + tick - Date.now()) / 1000));
+  $("shift").textContent = jobs[shift.job][0] + " · " + next + " san";
+}
+
+function showJobs(grid) {
+  jobs.forEach(([name, rate, minimum], index) => {
+    const card = panel(name, credits(rate) + " / 10 saniyə · " + minimum + " XP");
+    if (state.shift?.job === index) {
+      card.append(button("Növbəni dayandır", () => {
+        settle();
+        state.shift = null;
+        finish("Növbə dayandırıldı.");
+      }));
+    } else {
+      card.append(button("İşə başla", () => {
+        const now = Date.now();
+        state.shift = { job: index, start: now, paid: now };
+        finish(name + " növbəsi başladı.");
+      }, Boolean(state.shift) || state.xp < minimum));
+    }
+    grid.append(card);
+  });
+}
+
+function showMarket(root, grid) {
+  const filters = element("nav");
+  filters.className = "actions";
+  filters.setAttribute("aria-label", "Mağaza kateqoriyaları");
+  ["Hamısı", "Ev", "Maşın", "Geyim", "Biznes"].forEach((kind) => {
+    const item = button(kind, () => {
+      category = kind;
+      render();
+      $("screen").querySelector("nav [aria-pressed=true]")?.focus();
+    });
+    item.setAttribute("aria-pressed", String(kind === category));
+    filters.append(item);
+  });
+  root.append(filters);
+
+  stock.forEach(([name, kind, price, income], id) => {
+    if (category !== "Hamısı" && category !== kind) return;
+    const card = panel(name, kind + " · " + credits(price) +
+      (income ? " · Gündəlik gəlir " + credits(income) : ""));
+    const owned = state.owned.includes(id);
+    card.append(button(owned ? "Sənindir" : "Al", () => {
+      settle();
+      if (state.cash < price) {
+        write("Cüzdanda kifayət qədər kredit yoxdur.");
+        return;
+      }
+      state.cash -= price;
+      state.owned.push(id);
+      finish(name + " alındı.");
+    }, owned));
+    grid.append(card);
+  });
+}
+
+function showAssets(grid) {
+  if (!state.owned.length) grid.append(element("p", "İlk əşyanı mağazadan seç."));
+  for (const id of state.owned) {
+    const [name, kind, price, income] = stock[id];
+    const card = panel(name, kind + " · " + credits(price));
+    const actions = element("div");
+    actions.className = "actions";
+    if (income) {
+      const paid = state.business[id] === today();
+      actions.append(button(paid ? "Gəlir götürülüb" : "Gəliri götür", () => {
+        if (state.business[id] === today()) return;
+        state.cash += income;
+        state.business[id] = today();
+        finish("Biznes gəliri · " + credits(income));
+      }, paid));
+    }
+    actions.append(button("Sat · " + credits(Math.floor(price * .65)), () => {
+      if (!confirm(name + " satılsın?")) return;
+      state.cash += Math.floor(price * .65);
+      state.owned = state.owned.filter((item) => item !== id);
+      finish(name + " satıldı.");
+    }));
+    card.append(actions);
+    grid.append(card);
+  }
+}
+
+function showBank(root) {
+  const form = element("form");
+  form.className = "panel";
+  const label = element("label", "Məbləğ, kredit");
+  const field = element("input");
+  field.id = "bank-amount";
+  field.type = "number";
+  field.min = "1";
+  field.step = "1";
+  label.htmlFor = field.id;
+
+  function move(from, to) {
+    settle();
+    const value = Number(field.value);
+    if (!Number.isSafeInteger(value) || value < 1 || value > state[from]) {
+      write("Məbləği və balansı yoxla.");
+      return;
+    }
+    state[from] -= value;
+    state[to] += value;
+    finish(credits(value) + " köçürüldü.");
+  }
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    move("cash", "bank");
+  });
+
+  const actions = element("div");
+  actions.className = "actions";
+  actions.append(field, button("Banka yatır", () => move("cash", "bank")),
+    button("Bankdan çıxar", () => move("bank", "cash")));
+  form.append(label, actions);
+  root.append(form);
+}
+
+function render() {
+  $("entry").hidden = Boolean(state);
+  $("game").hidden = !state;
+  if (!state) return;
+
+  showBalances();
+  $("player").textContent = "Oyunçu · " + state.name;
+  $("tabs").replaceChildren(...["Şəhər", "İş", "Mağaza", "Bank", "Əmlakım"].map((label) => {
+    const tab = button(label, () => {
+      screen = label;
+      write("");
+      render();
+      $("tabs").querySelector("[aria-pressed=true]")?.focus();
+    });
+    tab.setAttribute("aria-pressed", String(screen === label));
+    return tab;
+  }));
+
+  const root = $("screen");
+  root.replaceChildren(element("h2", screen));
+  const grid = element("div");
+  grid.className = "grid";
+
+  if (screen === "İş") showJobs(grid);
+  if (screen === "Mağaza") showMarket(root, grid);
+  if (screen === "Bank") showBank(root);
+  if (screen === "Əmlakım") showAssets(grid);
+
+  if (screen === "Şəhər") {
+    const daily = panel("Gündəlik mükafat", "Hər gün şəhər büdcəsindən 150 kredit götür.");
+    const claimed = state.daily === today();
+    daily.append(button(claimed ? "Bugünkü mükafat götürülüb" : "150 kredit götür", () => {
+      if (state.daily === today()) return;
+      state.daily = today();
+      state.cash += 150;
+      finish("150 kredit əlavə olundu.");
+    }, claimed));
+    grid.append(daily, panel("Əmlak dəyəri",
+      credits(state.owned.reduce((sum, id) => sum + stock[id][2], 0))));
+  }
+
+  if (grid.children.length) root.append(grid);
+}
+
+$("entry").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const name = $("nickname").value.trim().normalize("NFC");
+  if (!/^[\p{L}\p{N}_-]{3,22}$/u.test(name)) {
+    $("entry-error").textContent = "3–22 hərf, rəqəm, alt xətt və ya tire yaz.";
+    return;
+  }
+  state = { name, cash: 300, bank: 0, xp: 0, owned: [], shift: null, daily: null, business: {} };
+  finish("Şəhərə xoş gəldin.");
+});
+
+if (settle()) save();
+render();
+
+setInterval(() => {
+  if (!state) return;
+  const working = Boolean(state.shift);
+  if (settle()) save();
+  if (working && !state.shift) render();
+  else showBalances();
+}, 1000);

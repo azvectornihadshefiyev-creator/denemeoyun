@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Obsidian City</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./game.js" defer></script>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="brand">OBSIDIAN CITY</p>
+      <h1>Şəhər sənin.</h1>
+      <p>İşə başla, kredit qazan və şəhərdə öz həyatını qur.</p>
+    </header>
+
+    <form id="entry" class="panel">
+      <label for="nickname">Oyunçu ləqəbi</label>
+      <div class="actions">
+        <input id="nickname" minlength="3" maxlength="22" required>
+        <button>Şəhərə daxil ol</button>
+      </div>
+      <p id="entry-error" role="status"></p>
+    </form>
+
+    <section id="game" hidden>
+      <p id="player"></p>
+
+      <div class="grid balances">
+        <article class="panel">Cüzdan<strong id="cash"></strong></article>
+        <article class="panel">Bank<strong id="bank"></strong></article>
+        <article class="panel">Təcrübə<strong id="xp"></strong></article>
+        <article class="panel">Növbə<strong id="shift"></strong></article>
+      </div>
+
+      <nav id="tabs" class="actions" aria-label="Şəhər bölmələri"></nav>
+      <p id="message" role="status"></p>
+      <section id="screen"></section>
+    </section>
+
+    <noscript>Oyunu açmaq üçün JavaScript-i aktiv et.</noscript>
+  </main>
+</body>
+</html>

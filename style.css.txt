@@ -1,0 +1,87 @@
+:root {
+  color-scheme: dark;
+  font: 16px system-ui, sans-serif;
+  background: #0d171c;
+  color: #ecf8f4;
+  --mint: #a8efd4;
+  --muted: #b7cdca;
+  --border: #31474c;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; }
+main { width: min(1060px, 94%); margin: 28px auto 56px; }
+
+header {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(22px, 5vw, 54px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: radial-gradient(ellipse at 84% 35%, #29574f, #17282e 54%, #111d22);
+}
+
+header::after {
+  content: "";
+  position: absolute;
+  inset: auto 70% 0 -30%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--mint), transparent);
+  animation: sweep 5s linear infinite;
+}
+
+@keyframes sweep {
+  to { transform: translateX(340%); }
+}
+
+.brand { color: var(--mint); font-weight: 750; letter-spacing: .16em; }
+h1 { font-size: clamp(3rem, 9vw, 7rem); margin: 0; line-height: .95; letter-spacing: -.075em; }
+h2 { margin: 0 0 14px; }
+h3 { margin: 0 0 8px; }
+p { color: var(--muted); line-height: 1.5; }
+
+.panel {
+  min-width: 0;
+  padding: 17px;
+  background: #17282e;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+#entry { margin-top: 18px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 195px), 1fr));
+  gap: 12px;
+}
+
+.balances strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--mint);
+  font-variant-numeric: tabular-nums;
+}
+
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+nav { margin-block: 17px; }
+label { display: block; margin-bottom: 7px; }
+#message { min-height: 24px; }
+#entry-error:empty { display: none; }
+
+button, input {
+  font: inherit;
+  border-radius: 7px;
+  padding: 9px 12px;
+}
+
+button { background: var(--mint); color: #17352c; border: 0; font-weight: 650; cursor: pointer; }
+button:hover:not(:disabled) { background: #ccf7e7; }
+button[aria-pressed="true"] { outline: 2px solid var(--mint); outline-offset: 3px; }
+button:disabled { opacity: .52; cursor: default; }
+input { max-width: 100%; background: #0d171c; color: white; border: 1px solid #629185; }
+button:focus-visible, input:focus-visible { outline: 2px solid white; outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  header::after { animation: none; }
+}
