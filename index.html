@@ -3,59 +3,54 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101922">
   <title>Obsidian City</title>
-  <link rel="stylesheet" href="./style.css?v=2">
-  <script src="./game.js?v=2" defer></script>
+  <link rel="stylesheet" href="./style.css?v=4">
+  <script src="./game.js?v=4" defer></script>
 </head>
 <body>
-  <main class="shell">
+  <main>
     <header class="hero">
-      <div class="skyline" aria-hidden="true"></div>
-      <div class="hero-copy">
-        <p class="brand">OBSIDIAN CITY</p>
-        <h1>Şəhər sənin.</h1>
-        <p>Məhəllələri kəşf et, növbə götür və öz şəhər həyatını qur.</p>
-      </div>
+      <p class="brand">OBSIDIAN CITY</p>
+      <h1>Şəhər sənin.</h1>
+      <p>İşlə, məhəllələri kəşf et və öz portfelini qur.</p>
     </header>
 
-    <form id="entry" class="panel entry">
+    <form id="entry" class="panel">
       <label for="nickname">Oyunçu ləqəbi</label>
       <div class="actions">
-        <input id="nickname" minlength="3" maxlength="22" required autocomplete="off">
+        <input id="nickname" minlength="3" maxlength="22" required>
         <button>Şəhərə daxil ol</button>
       </div>
-      <p id="entry-error" role="status"></p>
+      <p id="entry-status" role="status"></p>
     </form>
 
     <div id="game" hidden>
-      <p id="player" class="player"></p>
-      <div class="grid balances">
-        <article class="panel">Cüzdan <strong id="cash"></strong></article>
-        <article class="panel">Bank <strong id="bank"></strong></article>
-        <article class="panel">Təcrübə <strong id="xp"></strong></article>
-        <article class="panel">Növbə <strong id="shift"></strong></article>
+      <p id="player"></p>
+      <div class="grid stats">
+        <article class="panel">Cüzdan<strong id="cash"></strong></article>
+        <article class="panel">Bank<strong id="bank"></strong></article>
+        <article class="panel">Təcrübə<strong id="xp"></strong></article>
+        <article class="panel">Növbə<strong id="shift"></strong></article>
       </div>
-      <nav id="tabs" class="actions tabs" aria-label="Oyun bölmələri"></nav>
+      <nav id="tabs" class="actions" aria-label="Şəhər bölmələri"></nav>
       <p id="message" role="status"></p>
       <section id="screen" aria-labelledby="screen-title"></section>
     </div>
 
-    <footer>Obsidian City · Oyun məlumatı bu brauzerdə saxlanır.</footer>
+    <footer>Obsidian City · GitHub Pages demosu</footer>
     <noscript>Oyunu açmaq üçün JavaScript-i aktiv et.</noscript>
   </main>
 
-  <dialog id="product-dialog" aria-labelledby="product-title">
+  <dialog id="dialog" aria-labelledby="dialog-title">
     <form method="dialog" class="dialog-close">
       <button aria-label="Pəncərəni bağla">×</button>
     </form>
-    <div id="product-icon" class="product-stage" aria-hidden="true"></div>
-    <div class="dialog-body">
-      <h2 id="product-title"></h2>
-      <p id="product-price"></p>
-      <button id="confirm-buy" type="button">Alışı təsdiqlə</button>
-      <p id="product-error" role="status"></p>
+    <div id="dialog-head" class="dialog-head">
+      <span id="dialog-icon" class="emblem" aria-hidden="true"></span>
+      <h2 id="dialog-title"></h2>
+      <p id="dialog-summary"></p>
     </div>
+    <div id="dialog-body" class="dialog-body"></div>
   </dialog>
 </body>
 </html>
