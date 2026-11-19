@@ -3,411 +3,68 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="İşlə, əmlak al və şəhərdə öz həyatını qur.">
+  <meta name="theme-color" content="#10202a">
   <title>Obsidian City</title>
-  <link rel="stylesheet" href="./style.css?v=9">
-  <script type="module" src="./game.js?v=9"></script>
+  <link rel="stylesheet" href="./style.css?v=7.1">
+  <script src="./game.js?v=7.1" defer></script>
 </head>
-<body data-demo="true">
-  <header class="top">
-    <a class="logo" href="./index.html">OBSIDIAN <span>CITY</span></a>
-    <div id="identity">Yerli demo</div>
-  </header>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <p class="brand">OBSIDIAN CITY</p>
+      <h1>Şəhər sənin.</h1>
+      <p>İşlə, sərvətini böyüt, qarajını qur və Sahil trasına çıx.</p>
+    </header>
 
-  <button id="releases-open" class="release-button secondary" type="button" aria-haspopup="dialog">
-    <span aria-hidden="true"></span> V7 · Yeniliklər
-  </button>
-
-  <main>
-    <section class="skyline" aria-labelledby="city-title">
-      <div class="sky-art"></div>
-      <div class="sky-track" aria-hidden="true"></div>
-      <div class="sky-content">
-        <h1 id="city-title">Şəhər sənin.</h1>
-        <p>İşə başla. Pulunu idarə et. Öz evini və biznesini qur.</p>
-      </div>
+    <section class="panel ranking" aria-labelledby="ranking-title">
+      <h2 id="ranking-title">Ən zəngin oyunçular</h2>
+      <p>Bu cihazda yaradılmış profillərin ilk 10-luğu.
+        <a href="https://obsidian-city.alightdrake21.chatgpt.site/">Qlobal reytinq və yarışlar</a>
+      </p>
+      <div id="leaders" class="grid"></div>
     </section>
+    <form id="entry" class="panel">
+      <label for="nickname">Oyunçu ləqəbi</label>
+      <div class="actions">
+        <input id="nickname" minlength="3" maxlength="22" required autocomplete="off">
+        <button>Şəhərə daxil ol</button>
+      </div>
+      <p id="entry-status" role="status"></p>
+    </form>
 
-    <section id="ranking" class="ranking-home" aria-labelledby="ranking-title">
-      <div class="screen-head">
-        <div>
-          <h2 id="ranking-title">Şəhərin ilk 10 oyunçusu</h2>
-          <p>Ortaq şəhər reytinqi. Aktiv növbənin maaşı da sərvətə daxil edilir.</p>
-        </div>
-        <button id="ranking-reload" type="button" class="secondary">Yenilə</button>
+    <div id="game" hidden>
+      <div class="actions"><p id="player"></p><button id="switch-player" type="button">Profili dəyiş</button></div>
+      <div class="stats">
+        <article class="panel">Cüzdan<strong id="cash"></strong></article>
+        <article class="panel">Bank<strong id="bank"></strong></article>
+        <article class="panel">Səviyyə<strong id="level"></strong></article>
+        <article class="panel">Növbə<strong id="shift"></strong></article>
       </div>
-      <div class="actions race-controls">
-        <label>
-          Sıralama
-          <select id="ranking-sort">
-            <option value="wealth">Sərvət</option>
-            <option value="assets">Əmlak sayı</option>
-            <option value="xp">Təcrübə</option>
-          </select>
-        </label>
-        <label>
-          Oyunçu axtar
-          <input type="search" id="ranking-search" maxlength="22" placeholder="Ləqəb yaz">
-        </label>
-      </div>
-      <div id="leader-podium" class="grid podium"></div>
-      <p id="ranking-status" class="ranking-status" role="status"></p>
-      <div class="table-shell" id="ranking-table" hidden>
-        <table>
-          <thead>
-            <tr><th>Sıra</th><th>Oyunçu</th><th id="ranking-metric">Sərvət</th><th>Əmlak</th></tr>
-          </thead>
-          <tbody id="ranking-list"></tbody>
-        </table>
-      </div>
-      <div id="ranking-pages" class="actions race-pages" hidden>
-        <button id="ranking-prev" type="button" class="secondary">Əvvəlki</button>
-        <span id="ranking-page"></span>
-        <button id="ranking-next" type="button" class="secondary">Növbəti</button>
-      </div>
-      <button id="ranking-more" class="secondary" type="button" aria-expanded="false" aria-controls="ranking-table" hidden>
-        Bütün sıralama
-      </button>
-    </section>
-
-    <section id="gate" class="panel gate">
-      <p id="gate-status" role="status">Şəhər yüklənir…</p>
-      <a id="signin" class="button" href="/signin-with-chatgpt?return_to=/" target="_top" hidden>ChatGPT ilə daxil ol</a>
-      <button id="retry" class="secondary" type="button" hidden>Yenidən yoxla</button>
-      <noscript><p>Oyuna daxil olmaq üçün brauzerdə JavaScript-i aktiv et.</p></noscript>
-      <form id="city-login" class="form" hidden>
-        <label>Giriş adı
-          <input name="name" minlength="3" maxlength="22" autocomplete="username" required>
-        </label>
-        <label>Parol
-          <input name="password" type="password" minlength="12" maxlength="128" autocomplete="current-password" required>
-        </label>
-        <label>Şəhər açarı
-          <input name="phrase" type="password" minlength="10" maxlength="100" autocomplete="off" required>
-        </label>
-        <label class="remember"><input type="checkbox" name="remember"> Bu cihazda yadda saxla</label>
-        <button id="login-submit" type="submit">Daxil ol</button>
-      </form>
-      <form id="profile-form" hidden>
-        <label>Oyunçu ləqəbi
-          <input name="nickname" maxlength="22" minlength="3" autocomplete="off" required>
-        </label>
-        <button type="submit">Şəhərə daxil ol</button>
-      </form>
-    </section>
-
-    <div id="world" hidden>
-      <div class="status-grid" aria-label="Oyunçu göstəriciləri">
-        <article><span>Cüzdan</span><strong id="cash">0</strong></article>
-        <article><span>Bank</span><strong id="bank">0</strong></article>
-        <article><span>Təcrübə</span><strong id="xp">0</strong></article>
-        <article><span>Növbə</span><strong id="shift">Dayanıb</strong></article>
-      </div>
-
-      <aside class="race-banner" id="race-banner" hidden>
-        <div>
-          <strong id="race-invite">Sahil yarışına dəvət</strong>
-          <p>Hər beş dəqiqə · otaqda maksimum 10 sürücü</p>
-        </div>
-        <div class="actions">
-          <button id="race-join" type="button">Yarışa qoşul</button>
-          <a class="button secondary" href="#race">Yarış meydanı</a>
-        </div>
+      <aside id="invite" class="invite">
+        <div><strong>Sahil trası</strong><p id="invite-text"></p></div>
+        <button id="invite-action" type="button">Yarış meydanı</button>
       </aside>
-
-      <nav class="tabs" id="tabs" aria-label="Şəhərin bölmələri">
-        <a href="#race" id="race-tab">⚑ Yarış</a>
-        <a href="#city">◆ Şəhər</a>
-        <a href="#map">⌖ Xəritə</a>
-        <a href="#desk">▣ Tapşırıqlar</a>
-        <a href="#jobs">İş</a>
-        <a href="#market">◇ Mağaza</a>
-        <a href="#vault">Bank</a>
-        <a href="#garage">Əmlakım</a>
-        <a href="#ranking">Reytinq</a>
-        <a href="#goals">Hədəflər</a>
-        <a href="#projects">Layihələr</a>
-        <a href="#vip">VIP</a>
-        <a href="#profile">Kabinet</a>
-        <a href="#admin" id="admin-tab" hidden>Admin</a>
-      </nav>
-
-      <p id="feedback" role="status" class="feedback" hidden></p>
-
-      <section id="city" class="screen">
-        <div class="screen-head">
-          <div>
-            <h2>Şəhər mərkəzi</h2>
-            <p>Gəlir, iş və əmlak imkanlarını buradan seç.</p>
-          </div>
-          <button id="daily" type="button">Gündəlik 150 kredit</button>
-        </div>
-        <div class="grid districts">
-          <a class="panel" href="#map">
-            <h3>Şəhər xəritəsi</h3><p>Məhəllələr arasında gəz və şəhər pasportunu doldur.</p>
-          </a>
-          <a class="panel" href="#desk">
-            <h3>Növbə masası</h3><p>Peşən üzrə tapşırıqları həll et və əlavə gəlir qazan.</p>
-          </a>
-          <a class="panel" href="#jobs">
-            <h3>İş birjası</h3><p>Növbəni başlat, gəliri canlı izlə və təcrübə qazan.</p>
-          </a>
-          <a class="panel" href="#market">
-            <h3>Sahil bulvarı</h3><p>Evləri, maşınları, geyimləri və biznesləri araşdır.</p>
-          </a>
-          <a class="panel" href="#vault">
-            <h3>Maliyyə mərkəzi</h3><p>Kreditlərinin bir hissəsini bankda ayır.</p>
-          </a>
-          <a class="panel" href="#garage">
-            <h3>Şəxsi məkan</h3><p>Hansı evdə qaldığını, nə sürdüyünü və nə geyindiyini seç.</p>
-          </a>
-          <a class="panel" href="#projects">
-            <h3>Şəhər layihələri</h3><p>Şəhərin bağını, rəsədxanasını, limanını və muzeyini maliyyələşdir.</p>
-          </a>
-          <a class="panel" href="#vip">
-            <h3>Obsidian VIP</h3><p>Üzvlük üçün planlaşdırılan fərdiləşdirmələrə bax.</p>
-          </a>
-        </div>
-      </section>
-
-      <section id="map" class="screen" hidden>
-        <div class="screen-head">
-          <div>
-            <h2>Şəhər xəritəsi</h2>
-            <p>Xəritədə nöqtəyə toxun, yaxud xəritəni fokuslayıb ox düymələri ilə gəz. Məhəlləyə çatanda pasporta qeyd edə bilərsən.</p>
-          </div>
-          <strong id="passport-count"></strong>
-        </div>
-        <div class="map-layout">
-          <canvas id="city-map" width="720" height="420" tabindex="0" aria-label="Şəhər xəritəsi. Ox düymələri ilə hərəkət et."></canvas>
-          <div class="panel">
-            <h3>Məhəllələr</h3>
-            <div id="map-districts" class="actions"></div>
-            <div id="map-location" class="map-location"></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="desk" class="screen" hidden>
-        <div class="screen-head">
-          <div>
-            <h2>Növbə masası</h2>
-            <p>Peşənə aid dörd addımı düzgün ardıcıllıqla seç. Uğurlu tapşırıq əlavə maaş və XP verir.</p>
-          </div>
-          <button id="task-start" type="button">Tapşırıq götür</button>
-        </div>
-        <div id="task-panel" class="panel"></div>
-      </section>
-
-      <section id="race" class="screen" hidden>
-        <div class="race-arena">
-          <div class="arena-lines" aria-hidden="true"></div>
-          <div class="arena-content">
-            <h2>Sahil yarışı</h2>
-            <p id="race-caption"></p>
-            <strong id="race-clock">—</strong>
-          </div>
-        </div>
-        <p id="race-status" class="feedback" role="status"></p>
-        <div id="race-lanes" class="race-lanes"></div>
-        <div class="actions race-boost-controls">
-          <button id="race-boost" type="button" hidden>Sürətlən</button>
-          <span id="race-boost-note"></span>
-        </div>
-        <button id="race-claim" type="button" hidden>Mükafatı götür</button>
-      </section>
-
-      <section id="jobs" class="screen" hidden>
-        <div class="screen-head">
-          <div>
-            <h2>İş birjası</h2>
-            <p>Hər 10 saniyə tamam olanda maaş və 1 təcrübə xalı yığılır. Növbə 8 saatdan sonra bitir.</p>
-          </div>
-          <button id="stop" type="button" hidden>Növbəni dayandır</button>
-        </div>
-        <div class="grid" id="jobs-list"></div>
-      </section>
-
-      <section id="market" class="screen" hidden>
-        <div class="screen-head">
-          <div>
-            <h2>Şəhər mağazası</h2>
-            <p>Alışlar cüzdandan ödənilir və əmlakına əlavə olunur.</p>
-          </div>
-        </div>
-        <div class="filters" id="filters" aria-label="Məhsul kateqoriyası"></div>
-        <div class="grid" id="market-list"></div>
-      </section>
-
-      <section id="vault" class="screen" hidden>
-        <h2>Şəhər bankı</h2>
-        <p>Kreditləri cüzdan və bank hesabı arasında köçür.</p>
-        <form id="bank-form" class="panel form">
-          <label>Məbləğ, kredit
-            <input type="number" name="amount" min="1" max="10000000" required>
-          </label>
-          <div class="actions">
-            <button name="action" value="deposit">Banka yatır</button>
-            <button name="action" value="withdraw">Bankdan çıxar</button>
-          </div>
-        </form>
-      </section>
-
-      <section id="garage" class="screen" hidden>
-        <h2>Əmlakım</h2>
-        <p>Biznes sən oflayn olanda da gəlir yığır. Bir dəfəyə son 7 günün gəlirini götürə bilərsən. Satış alış qiymətinin 65%-ni qaytarır.</p>
-        <div id="owned-list" class="grid"></div>
-      </section>
-
-      <section id="goals" class="screen" hidden>
-        <div class="screen-head">
-          <div>
-            <h2>Şəhər hədəfləri</h2>
-            <p>Peşə, əmlak və yığım üzrə on hədəf. Hər mükafatı bir dəfə götürə bilərsən.</p>
-          </div>
-        </div>
-        <div class="grid" id="goals-list"></div>
-      </section>
-
-      <section id="profile" class="screen" hidden>
-        <h2>Şəxsi kabinet</h2>
-        <div class="grid">
-          <article class="panel">
-            <h3 id="profile-name"></h3>
-            <p id="profile-assets"></p>
-            <div id="profile-active"></div>
-            <details><summary>Hesab identifikatorum</summary><p id="account-id"></p></details>
-          </article>
-          <article class="panel">
-            <h3>İş tarixçəsi</h3>
-            <ul id="earnings"></ul>
-          </article>
-        </div>
-        <form id="profile-edit" class="panel form grouped">
-          <h3>Profili düzəlt</h3>
-          <label>Görünən ləqəb
-            <input name="nickname" minlength="3" maxlength="22" required>
-          </label>
-          <label>Şəhər nişanı
-            <select name="emblem">
-              <option>◆</option><option>☀</option><option>✦</option>
-              <option>♜</option><option>⚡</option><option>◈</option>
-            </select>
-          </label>
-          <label class="bio-field">Bio <textarea name="bio" rows="3" maxlength="160"></textarea></label>
-          <button type="submit">Profili saxla</button>
-        </form>
-        <div class="actions">
-          <button id="logout" class="secondary" type="button">Şəhər hesabından çıx</button>
-        </div>
-        <article class="panel grouped">
-          <h3>Tamamlanan şəhər layihələri</h3>
-          <p id="completed-projects"></p>
-        </article>
-        <article class="panel grouped">
-          <h3>Son əməliyyatlar</h3>
-          <ul id="activity"></ul>
-        </article>
-      </section>
-
-      <section id="projects" class="screen" hidden>
-        <h2>Şəhər layihələri</h2>
-        <p>Oyun krediti ilə şəhər üçün üç mərhələli layihələr maliyyələşdir. Tamamlanan layihələr kabinetində görünür.</p>
-        <div id="project-list" class="grid"></div>
-      </section>
-
-      <section id="vip" class="screen" hidden>
-        <div class="panel vip-panel">
-          <h2>Obsidian VIP</h2>
-          <p>Gələcək üzvlük üçün nəzərdə tutulan fərdiləşdirmələr.</p>
-          <ul>
-            <li>Profil üçün eksklüziv çərçivə</li>
-            <li>Portfeldə kolleksiya vitrini</li>
-            <li>Kabinet üçün alternativ görünüş</li>
-          </ul>
-          <p>Üzvlük və ödəniş hələ açılmayıb.</p>
-          <button disabled type="button">WhatsApp sifarişi aktiv deyil</button>
-        </div>
-      </section>
-
-      <section id="admin" class="screen" hidden>
-        <h2>Şəhər idarəetməsi</h2>
-        <p>Kredit dəyişiklikləri oyunçunun cüzdanına tətbiq olunur və tarixçədə qeyd edilir.</p>
-        <div class="grid">
-          <div class="panel form">
-            <form id="admin-lookup" class="form">
-              <label>Oyunçunun ləqəbi
-                <input id="admin-name" list="admin-players" maxlength="22" required>
-              </label>
-              <datalist id="admin-players"></datalist>
-              <button class="secondary" type="submit">Oyunçuya bax</button>
-            </form>
-            <div id="admin-detail" aria-live="polite"></div>
-            <form id="admin-form" class="form" hidden>
-              <label>Cüzdan dəyişikliyi
-                <input name="delta" type="number" min="-10000000" max="10000000" placeholder="100 və ya −100">
-              </label>
-              <label>Hədiyyə <select name="item" id="admin-items"></select></label>
-              <label>Səbəb <input name="reason" minlength="3" maxlength="120" required></label>
-              <div class="actions">
-                <button type="submit" value="adjust">Balansı dəyiş</button>
-                <button type="submit" value="gift" class="secondary">Hədiyyə ver</button>
-              </div>
-            </form>
-          </div>
-          <article class="panel">
-            <h3>Admin tarixçəsi</h3>
-            <ul id="admin-history"></ul>
-          </article>
-        </div>
-      </section>
+      <nav id="tabs" class="actions" aria-label="Şəhər bölmələri"></nav>
+      <p id="message" role="status"></p>
+      <section id="screen" aria-labelledby="title"></section>
     </div>
+
+    <details class="panel"><summary>V7.1 · Yeniliklər</summary><p>İlk 10-luq, əmlak portfelləri, canlı yarış sayğacı, şəhər layihələri və VIP vitrini.</p>
+      <button id="sound-toggle" type="button" aria-pressed="false">Səs effektləri</button>
+    </details>
+    <footer>Obsidian City · Yerli oyun demosu</footer>
+    <noscript>Oyunu açmaq üçün JavaScript-i aktiv et.</noscript>
   </main>
 
-  <dialog id="releases" aria-labelledby="release-title">
-    <form method="dialog">
-      <button class="asset-close secondary" aria-label="Pəncərəni bağla">×</button>
+  <dialog id="modal" aria-labelledby="modal-title">
+    <form method="dialog" class="modal-close">
+      <button aria-label="Pəncərəni bağla">×</button>
     </form>
-    <h2 id="release-title">Şəhər yenilikləri</h2>
-    <h3>V7 · Şəhər layihələri</h3>
-    <ul>
-      <li>Dörd layihəni oyun krediti ilə mərhələli maliyyələşdir.</li>
-      <li>İlk 10-luqda portfel dəyərinə və əmlak saylarına bax.</li>
-      <li>VIP bölməsinin ilkin görünüşü açıldı.</li>
-    </ul>
-    <h3>Əvvəlki buraxılış</h3>
-    <p>İlk 10 oyunçu, 10 nəfərlik yarış otaqları və zamanlı sürətlənmə.</p>
-    <button id="sound-toggle" type="button" class="secondary" aria-pressed="false">Səs effektləri</button>
-  </dialog>
-
-  <dialog id="portfolio-dialog" aria-labelledby="portfolio-title">
-    <form method="dialog">
-      <button class="asset-close secondary" aria-label="Pəncərəni bağla">×</button>
-    </form>
-    <header class="portfolio-head">
-      <p id="portfolio-emblem" aria-hidden="true"></p>
-      <h2 id="portfolio-title">Əmlak portfeli</h2>
-      <p id="portfolio-bio"></p>
-    </header>
-    <div id="portfolio-items" class="portfolio-items"></div>
-  </dialog>
-
-  <dialog id="asset-dialog" aria-labelledby="asset-title">
-    <form method="dialog">
-      <button class="asset-close secondary" aria-label="Pəncərəni bağla">×</button>
-    </form>
-    <div id="asset-preview" class="asset-preview" aria-hidden="true"></div>
-    <div class="asset-details">
-      <h2 id="asset-title"></h2>
-      <p id="asset-description"></p>
-      <div id="asset-specs"></div>
-      <strong id="asset-price"></strong>
-      <div class="actions">
-        <button id="asset-buy" type="button">Alışı təsdiqlə</button>
-      </div>
+    <div id="modal-art" class="modal-art"></div>
+    <div class="modal-body">
+      <h2 id="modal-title"></h2>
+      <div id="modal-content"></div>
     </div>
   </dialog>
-
-  <footer><span>Obsidian City · Oyundaxili kreditlər</span></footer>
 </body>
 </html>
