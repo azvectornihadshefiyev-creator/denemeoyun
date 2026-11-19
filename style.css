@@ -94,3 +94,116 @@ button:disabled { opacity: .52; cursor: default; }
 input, textarea, select {
   max-width: 100%;
   min-height: 41px;
+  padding: 8px 10px;
+  border: 1px solid #65848d;
+  border-radius: 7px;
+  background: #101c24;
+  color: white;
+}
+textarea { width: 100%; resize: vertical; }
+label { display: block; margin-bottom: 5px; }
+:focus-visible { outline: 2px solid white; outline-offset: 3px; }
+
+.invite {
+  position: relative;
+  overflow: hidden;
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 13px 16px;
+  border: 1px solid #9e8051;
+  border-radius: 10px;
+  background: linear-gradient(115deg, #463829, #263640 75%);
+}
+.invite p { margin: 4px 0 0; }
+.leader {
+  margin-bottom: 14px;
+  border-color: #a9915c;
+  background: linear-gradient(135deg, #483b2b, #253945);
+}
+#wealth { display: block; color: var(--gold); font-size: clamp(1.5rem, 4vw, 2.6rem); }
+.wealth-up { animation: wealth-up .75s ease-out; }
+@keyframes wealth-up {
+  40% { color: var(--mint); text-shadow: 0 0 15px var(--mint); }
+}
+
+.car-art { display: block; width: 100%; max-width: 220px; margin: 0 auto 8px; }
+.data { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin: 12px 0; }
+.data div { padding: 7px; border-radius: 6px; background: #12252f; }
+.data dt { color: var(--muted); font-size: .８rem; }
+.data dd { margin: 4px 0 0; font-weight: 750; color: var(--mint); }
+.progress { width: 100%; accent-color: var(--mint); }
+.editor { display: grid; gap: 8px; }
+.editor button { justify-self: start; }
+
+.map-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(200px, 1fr); gap: 12px; }
+canvas { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid #54737d; cursor: crosshair; }
+
+.arena {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 200px;
+  padding: 20px;
+  border: 1px solid #668ba5;
+  border-radius: 13px;
+  background: radial-gradient(ellipse at 80% 30%, #2d5e87, #172c3c 70%);
+}
+.arena::before {
+  content: "";
+  position: absolute;
+  inset: -15%;
+  z-index: -1;
+  background: repeating-linear-gradient(0deg, transparent 0 54px, #8ad9ff50 55px 58px);
+  transform: perspective(550px) rotateY(-25deg);
+  animation: lanes 2.5s linear infinite;
+}
+@keyframes lanes { to { background-position: 0 58px; } }
+#race-clock { display: block; font-size: clamp(2rem, 9vw, 5rem); color: var(--gold); }
+.road { position: relative; height: 52px; margin-block: 11px; border-bottom: 2px dashed #a2cbd0; }
+.road .car-art { position: absolute; width: 86px; max-width: 20%; bottom: 0; left: 0; margin: 0; transition: left .45s linear; }
+.race-label { color: var(--mint); font-weight: 750; }
+
+dialog {
+  width: min(630px, calc(100% - 22px));
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  padding: 0;
+  background: #182b35;
+  color: inherit;
+  border: 1px solid #5f8491;
+  border-radius: 14px;
+}
+dialog::backdrop { background: #061015c9; backdrop-filter: blur(5px); }
+.modal-close { position: absolute; top: 9px; right: 9px; z-index: 1; }
+.modal-art { display: grid; place-items: center; min-height: 115px; padding: 12px; background: radial-gradient(ellipse, #426e71, #1b313d); }
+.modal-art .car-art { max-width: 300px; margin: 0; animation: turn 3.5s ease-in-out infinite alternate; }
+@keyframes turn {
+  from { transform: perspective(450px) rotateY(-25deg) translateY(5px); }
+  to { transform: perspective(450px) rotateY(25deg) translateY(-5px); }
+}
+.modal-symbol { color: var(--gold); font-size: 3.5rem; }
+.modal-body { padding: 18px; }
+
+@media (max-width: 700px) {
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .map-layout { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero::before, .hero::after, .invite::after, .arena::before,
+  .modal-art .car-art, .wealth-up { animation: none; }
+  .road .car-art { transition: none; }
+}
+
+.ranking { margin-block: 18px; }
+.ranking a { color: var(--mint); text-decoration: underline; }
+.rank-card strong { display: block; margin-block: 10px; color: var(--gold); }
+.rank-card:first-child {
+  border-color: #b59453;
+  background: linear-gradient(135deg, #4b3b2c, var(--panel) 76%);
+}
+.vip-card { border-color: #94754f; background: linear-gradient(140deg, #3e3228, var(--panel) 75%); }
+#sound-toggle[aria-pressed="true"] { outline: 2px solid var(--mint); }
