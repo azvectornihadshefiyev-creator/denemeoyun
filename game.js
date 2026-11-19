@@ -7,7 +7,7 @@ const profileKey = name => name.toLocaleLowerCase("az");
 let profiles = new Map();
 try {
   const records = JSON.parse(localStorage.getItem(PROFILES_KEY) || "[]");
-  profiles = new Map(records.filter(record => typeof record?.name === "string")
+  profiles = new Map(records.filter(record => typeof record?.name === "string" && validProfileName(record.name))
     .map(record => [profileKey(record.name), record]));
 } catch {}
 
@@ -19,7 +19,8 @@ const format = new Intl.NumberFormat("az-AZ");
 const kr = value => format.format(value) + " kredit";
 const day = () => Math.floor((Date.now() + 4 * 3_600_000) / 86_400_000);
 const wave = () => Math.floor(Date.now() / WAVE);
-const validName = name => /^[\p{L}\p{N}_-]{3,22}$/u.test(name);
+function validProfileName(name) { return /^[\p{L}\p{N}_-]{3,22}$/u.test(name); }
+const validName = validProfileName;
 const kinds = ["Ev", "Maşın", "Geyim", "Biznes"];
 const symbols = { Ev: "⌂", Maşın: "▰", Geyim: "◇", Biznes: "▥" };
 const emblems = ["◆", "☀", "✦", "♜", "⚡", "◈"];
@@ -93,4 +94,3 @@ const places = [
 const tickets = [
   ["Bağlamanı yoxla", "Marşrutu seç", "Ünvana çatdır", "Qəbzi təsdiqlə"],
   ["Sifarişi oxu", "Qəhvəni üyüt", "İçkini hazırla", "Fincanı təqdim et"],
-  ["Maşını qəbul et", "Nasazlığı tap", "Hissəni dəyiş", "Yekun sınağı apar"],
