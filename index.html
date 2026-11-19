@@ -3,22 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10202a">
   <title>Obsidian City</title>
-  <link rel="stylesheet" href="./style.css?v=4">
-  <script src="./game.js?v=4" defer></script>
+  <link rel="stylesheet" href="./style.css?v=5">
+  <script src="./game.js?v=5" defer></script>
 </head>
 <body>
-  <main>
+  <main class="shell">
     <header class="hero">
       <p class="brand">OBSIDIAN CITY</p>
       <h1>Şəhər sənin.</h1>
-      <p>İşlə, məhəllələri kəşf et və öz portfelini qur.</p>
+      <p>İşlə, sərvətini böyüt, qarajını qur və Sahil trasına çıx.</p>
     </header>
 
     <form id="entry" class="panel">
       <label for="nickname">Oyunçu ləqəbi</label>
       <div class="actions">
-        <input id="nickname" minlength="3" maxlength="22" required>
+        <input id="nickname" minlength="3" maxlength="22" required autocomplete="off">
         <button>Şəhərə daxil ol</button>
       </div>
       <p id="entry-status" role="status"></p>
@@ -26,31 +27,34 @@
 
     <div id="game" hidden>
       <p id="player"></p>
-      <div class="grid stats">
+      <div class="stats">
         <article class="panel">Cüzdan<strong id="cash"></strong></article>
         <article class="panel">Bank<strong id="bank"></strong></article>
-        <article class="panel">Təcrübə<strong id="xp"></strong></article>
+        <article class="panel">Səviyyə<strong id="level"></strong></article>
         <article class="panel">Növbə<strong id="shift"></strong></article>
       </div>
+      <aside id="invite" class="invite">
+        <div><strong>Sahil trası</strong><p id="invite-text"></p></div>
+        <button id="invite-action" type="button">Yarış meydanı</button>
+      </aside>
       <nav id="tabs" class="actions" aria-label="Şəhər bölmələri"></nav>
       <p id="message" role="status"></p>
-      <section id="screen" aria-labelledby="screen-title"></section>
+      <section id="screen" aria-labelledby="title"></section>
     </div>
 
-    <footer>Obsidian City · GitHub Pages demosu</footer>
+    <footer>Obsidian City · Yerli oyun demosu</footer>
     <noscript>Oyunu açmaq üçün JavaScript-i aktiv et.</noscript>
   </main>
 
-  <dialog id="dialog" aria-labelledby="dialog-title">
-    <form method="dialog" class="dialog-close">
+  <dialog id="modal" aria-labelledby="modal-title">
+    <form method="dialog" class="modal-close">
       <button aria-label="Pəncərəni bağla">×</button>
     </form>
-    <div id="dialog-head" class="dialog-head">
-      <span id="dialog-icon" class="emblem" aria-hidden="true"></span>
-      <h2 id="dialog-title"></h2>
-      <p id="dialog-summary"></p>
+    <div id="modal-art" class="modal-art"></div>
+    <div class="modal-body">
+      <h2 id="modal-title"></h2>
+      <div id="modal-content"></div>
     </div>
-    <div id="dialog-body" class="dialog-body"></div>
   </dialog>
 </body>
 </html>
