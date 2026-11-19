@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#10202a">
   <title>Obsidian City</title>
-  <link rel="stylesheet" href="./style.css?v=7.1">
-  <script src="./game.js?v=7.1" defer></script>
+  <link rel="stylesheet" href="./style.css?v=7.2">
+  <script src="./game.js?v=7.2" defer></script>
 </head>
 <body>
   <main class="shell">
@@ -18,18 +18,16 @@
 
     <section class="panel ranking" aria-labelledby="ranking-title">
       <h2 id="ranking-title">Ən zəngin oyunçular</h2>
-      <p>Bu cihazda yaradılmış profillərin ilk 10-luğu.
-        <a href="https://obsidian-city.alightdrake21.chatgpt.site/">Qlobal reytinq və yarışlar</a>
-      </p>
+      <p>Bu brauzerdəki profillərin sərvətə görə ilk 10-luğu.</p>
       <div id="leaders" class="grid"></div>
     </section>
     <form id="entry" class="panel">
       <label for="nickname">Oyunçu ləqəbi</label>
       <div class="actions">
         <input id="nickname" minlength="3" maxlength="22" required autocomplete="off">
-        <button>Şəhərə daxil ol</button>
+        <button id="enter-city" type="submit" disabled>Şəhərə daxil ol</button>
       </div>
-      <p id="entry-status" role="status"></p>
+      <p id="entry-status" role="status">Oyun yüklənir. Giriş düyməsi açılmasa, üç oyun faylının eyni GitHub qovluğunda olduğunu yoxla və səhifəni yenilə.</p>
     </form>
 
     <div id="game" hidden>
@@ -49,7 +47,7 @@
       <section id="screen" aria-labelledby="title"></section>
     </div>
 
-    <details class="panel"><summary>V7.1 · Yeniliklər</summary><p>İlk 10-luq, əmlak portfelləri, canlı yarış sayğacı, şəhər layihələri və VIP vitrini.</p>
+    <details class="panel"><summary>V7.2 · Yeniliklər</summary><p>İlk 10-luq, əmlak portfelləri, canlı yarış sayğacı, şəhər layihələri və VIP vitrini.</p>
       <button id="sound-toggle" type="button" aria-pressed="false">Səs effektləri</button>
     </details>
     <footer>Obsidian City · Yerli oyun demosu</footer>
